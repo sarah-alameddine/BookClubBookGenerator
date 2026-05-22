@@ -1,8 +1,7 @@
 import Buttons from "./Buttons";
 import { useBookStore } from "../hooks/useBookStore";
-import { Link } from "react-router-dom";
 import type { Book } from "../types";
-import catHowl from "../assets/images/catHowl.jpg";
+import cat from "../assets/images/cat.jpg";
 import Footer from "./Footer";
 
 export default function ReadBooksListPage() {
@@ -34,21 +33,19 @@ export default function ReadBooksListPage() {
     return bookList.some((book) => book.read === read);
   };
 
-  // ✅ NEW: read books count
   const readBooks = bookList.filter((book) => book.read === true);
   const readCount = readBooks.length;
 
   return (
-    <main className="min-h-screen flex flex-col w-full bg-gray-50">
-      {/* MAIN CONTENT */}
-      <section className="flex-1 mx-auto w-full max-w-5xl px-6 pb-12 flex flex-col gap-10">
+    <main className="min-h-screen flex flex-col bg-gray-50">
+      {/* CONTENT */}
+      <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 pb-12">
         {/* HEADER */}
-        <header className="text-center py-6">
+        <header className="py-6 text-center">
           <h1 className="text-4xl lg:text-5xl font-bold text-gray-900">
             Read Book List
           </h1>
 
-          {/* ✅ NEW: message under title */}
           <p className="mt-3 text-gray-600 text-sm lg:text-base">
             You’ve finished{" "}
             <span className="font-semibold text-emerald-600">{readCount}</span>{" "}
@@ -56,27 +53,26 @@ export default function ReadBooksListPage() {
           </p>
         </header>
 
-        {/* BOOKS */}
+        {/* BOOK LIST */}
         <section className="flex flex-col gap-8">
           {loading ? (
-            <article className="mx-auto w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center">
-              <p className="text-xl font-semibold text-gray-800">
+            <article className="mx-auto w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm">
+              <p className="text-lg font-semibold text-gray-700">
                 Loading books...
               </p>
-
-              <div className="w-full bg-gray-200 rounded-full h-3 mt-6 overflow-hidden">
-                <div className="bg-blue-600 h-3 w-2/3 animate-pulse"></div>
+              <div className="mt-6 h-3 w-full overflow-hidden rounded-full bg-gray-200">
+                <div className="h-3 w-2/3 animate-pulse rounded-full bg-emerald-500"></div>
               </div>
             </article>
           ) : error ? (
-            <article className="mx-auto w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-red-200 p-10 text-center">
-              <p className="text-xl font-semibold text-red-600">{error}</p>
+            <article className="mx-auto w-full max-w-3xl rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm">
+              <p className="text-lg font-semibold text-red-600">{error}</p>
               <p className="mt-2 text-sm text-gray-500">
                 Please refresh the page.
               </p>
             </article>
           ) : checkIfListhasReadBooks(bookList, true) === false ? (
-            <article className="mx-auto w-full max-w-3xl bg-white rounded-2xl shadow-sm border border-gray-200 p-10 text-center text-gray-700">
+            <article className="mx-auto w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-10 text-center text-gray-600 shadow-sm">
               No books here yet 😓. Add a book to get started!
             </article>
           ) : (
@@ -87,28 +83,37 @@ export default function ReadBooksListPage() {
                   key={book.id}
                   className="mx-auto w-full max-w-3xl rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
                 >
-                  <div className="flex flex-col gap-6 lg:flex-row lg:justify-between">
-                    {/* BOOK INFO */}
-                    <div className="flex flex-col lg:flex-row gap-4 flex-1">
+                  <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-between">
+                    {/* LEFT SIDE */}
+                    <div className="flex flex-1 flex-col items-center gap-4 lg:flex-row lg:items-start">
                       <img
-                        className="h-48 w-auto rounded-xl object-contain bg-gray-100 p-2"
+                        className="h-48 w-auto rounded-xl bg-gray-100 p-2 object-contain"
                         alt={book.title}
                         src={`http://books.google.com/books/content?id=${book.bookId}&printsec=frontcover&img=1&zoom=1&source=gbs_api`}
                       />
 
-                      <div className="space-y-3 lg:px-6">
+                      {/* TEXT */}
+                      <div className="space-y-3 text-center lg:text-left lg:px-6">
                         <h2 className="text-2xl font-semibold text-gray-900">
                           {book.title}
                         </h2>
 
-                        <p className="text-blue-600 font-medium">
+                        <p className="font-medium text-emerald-600">
                           {book.author}
                         </p>
+
+                        {/* OPTIONAL PUBLISHED DATE */}
+                        {book.publishedDate && (
+                          <p className="text-sm text-gray-500">
+                            Published:{" "}
+                            {new Date(book.publishedDate).toLocaleDateString()}
+                          </p>
+                        )}
                       </div>
                     </div>
 
                     {/* ACTIONS */}
-                    <div className="flex flex-col gap-4 items-center lg:items-end">
+                    <div className="flex flex-col items-center gap-4 lg:items-end">
                       <Buttons
                         onClick={() => markBookAsUnread(book.id)}
                         title="Move to current"
@@ -129,7 +134,7 @@ export default function ReadBooksListPage() {
       </section>
 
       {/* FOOTER */}
-      <Footer src={catHowl} title="cat" />
+      <Footer src={cat} title="cat" />
     </main>
   );
 }

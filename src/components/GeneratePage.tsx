@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-
+import { useState } from "react";
 import MainText from "./MainText";
 import Buttons from "./Buttons";
 import { useBookStore } from "../hooks/useBookStore";
 import type { Book } from "../types";
-import cat from "../assets/images/cat.jpg";
+import catLook from "../assets/images/catLook.jpg";
 import Footer from "./Footer";
 
 function GeneratePage() {
@@ -24,7 +23,7 @@ function GeneratePage() {
 
   const goodreadsLink = users.title
     ? `https://www.goodreads.com/search?q=${encodeURIComponent(
-        users.title + " " + users.author
+        users.title + " " + users.author,
       )}`
     : "#";
 
@@ -68,10 +67,8 @@ function GeneratePage() {
 
   return (
     <main className="min-h-screen flex flex-col bg-emerald-50 overflow-x-hidden">
-
       {/* MAIN */}
       <section className="flex-1 flex flex-col items-center w-full">
-
         {/* HERO TEXT */}
         <div className="w-full max-w-5xl px-6 py-12">
           <MainText />
@@ -79,7 +76,6 @@ function GeneratePage() {
 
         {/* BUTTON */}
         <div className="flex flex-col items-center gap-6 w-full">
-
           <Buttons
             onClick={() => getRandomItem(booksInDB)}
             title={isGenerating ? "Generating..." : "CLICK HERE!"}
@@ -99,9 +95,7 @@ function GeneratePage() {
 
         {/* RESULT */}
         <div className="w-full flex justify-center px-4 py-12">
-
           <div className="w-full max-w-3xl flex flex-col items-center gap-4">
-
             {/* HEADER */}
             {!isGenerating && hasGenerated && users.title && (
               <h2 className="text-center text-2xl font-bold text-emerald-700 tracking-wide">
@@ -112,9 +106,7 @@ function GeneratePage() {
             {/* BOOK CARD */}
             {!isGenerating && hasGenerated && users.title && (
               <div className="w-full rounded-2xl border border-emerald-100 bg-white shadow-xl overflow-hidden">
-
                 <div className="p-6 flex flex-col items-center text-center gap-5">
-
                   {/* COVER */}
                   {coverUrl && (
                     <img
@@ -128,9 +120,7 @@ function GeneratePage() {
                     {users.title}
                   </h3>
 
-                  <p className="text-emerald-600 font-medium">
-                    {users.author}
-                  </p>
+                  <p className="text-emerald-600 font-medium">{users.author}</p>
 
                   {users.publishedDate && (
                     <p className="text-sm text-gray-500">
@@ -149,7 +139,6 @@ function GeneratePage() {
                   >
                     View on Goodreads 📖
                   </a>
-
                 </div>
               </div>
             )}
@@ -160,14 +149,11 @@ function GeneratePage() {
                 Click generate to discover your next book 📖
               </div>
             )}
-
           </div>
-
         </div>
-
       </section>
 
-      <Footer src={cat} title="cat" />
+      <Footer src={catLook} title="catLook" />
     </main>
   );
 }

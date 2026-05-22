@@ -1,7 +1,4 @@
-import React from 'react'
-import Buttons from "./Buttons";
-
-import { Book } from '../types';
+import type { Book } from '../types';
 
 interface DisplayBooksProps {
   bookList: Book[];

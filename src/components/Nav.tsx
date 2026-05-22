@@ -1,6 +1,6 @@
-import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import catLook from "../assets/images/catLook.jpg";
+import logo from "../assets/images/logo.png";
+import { useState } from "react";
 
 function Nav() {
   const [open, setOpen] = useState(false);
@@ -14,21 +14,20 @@ function Nav() {
 
   return (
     <nav className="w-full border-b border-gray-200 bg-white shadow-sm">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-
-        {/* LEFT (LOGO) */}
+      <div className="flex w-full items-center px-4 py-3">
+        {/* LEFT (PINNED LEFT) */}
         <div className="flex items-center gap-3">
           <img
-            src={catLook}
-            alt="cat"
-            className="h-10 w-10 rounded-full object-cover"
+            src={logo}
+            alt="logo"
+            className="h-10 w-10 rounded-md object-cover"
           />
           <span className="text-lg font-bold text-gray-900">
             BooklingsBookClub
           </span>
         </div>
 
-        {/* DESKTOP MENU */}
+        <div className="flex-1" />
         <div className="hidden md:flex gap-2">
           <NavLink to="/" className={linkClass}>
             Book Generator
@@ -47,7 +46,7 @@ function Nav() {
           </NavLink>
         </div>
 
-        {/* HAMBURGER BUTTON (MOBILE) */}
+        {/* MOBILE BUTTON (RIGHT) */}
         <button
           onClick={() => setOpen(!open)}
           className="md:hidden flex flex-col gap-1 p-2"
@@ -61,12 +60,15 @@ function Nav() {
       {/* MOBILE MENU */}
       {open && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 pb-4 space-y-2">
-
           <NavLink to="/" className={linkClass} onClick={() => setOpen(false)}>
             Book Generator
           </NavLink>
 
-          <NavLink to="/search2" className={linkClass} onClick={() => setOpen(false)}>
+          <NavLink
+            to="/search2"
+            className={linkClass}
+            onClick={() => setOpen(false)}
+          >
             Search
           </NavLink>
 
@@ -85,7 +87,6 @@ function Nav() {
           >
             Read Books
           </NavLink>
-
         </div>
       )}
     </nav>
