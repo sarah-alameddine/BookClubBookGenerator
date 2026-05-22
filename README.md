@@ -46,8 +46,8 @@ npm install
 
 ```
 
-## Build project
+## Build project and deploy to Firebase
 
 ```bash
-npm run build
+npm run deploy
 ```
