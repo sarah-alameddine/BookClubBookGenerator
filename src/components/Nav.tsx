@@ -22,9 +22,11 @@ function Nav() {
             alt="logo"
             className="h-10 w-10 rounded-md object-cover"
           />
-          <span className="text-lg font-bold text-gray-900">
-            BooklingsBookClub
-          </span>
+          <NavLink to="/">
+            <span className="text-lg font-bold text-gray-900">
+              BooklingsBookClub
+            </span>
+          </NavLink>
         </div>
 
         <div className="flex-1" />
@@ -33,15 +35,15 @@ function Nav() {
             Book Generator
           </NavLink>
 
-          <NavLink to="/search2" className={linkClass}>
+          <NavLink to="/search" className={linkClass}>
             Search
           </NavLink>
 
-          <NavLink to="/CurrReadPage" className={linkClass}>
+          <NavLink to="/current" className={linkClass}>
             Current Books
           </NavLink>
 
-          <NavLink to="/readPage" className={linkClass}>
+          <NavLink to="/read" className={linkClass}>
             Read Books
           </NavLink>
         </div>
@@ -65,7 +67,7 @@ function Nav() {
           </NavLink>
 
           <NavLink
-            to="/search2"
+            to="/search"
             className={linkClass}
             onClick={() => setOpen(false)}
           >
@@ -73,7 +75,7 @@ function Nav() {
           </NavLink>
 
           <NavLink
-            to="/CurrReadPage"
+            to="/current"
             className={linkClass}
             onClick={() => setOpen(false)}
           >
@@ -81,7 +83,7 @@ function Nav() {
           </NavLink>
 
           <NavLink
-            to="/readPage"
+            to="/read"
             className={linkClass}
             onClick={() => setOpen(false)}
           >

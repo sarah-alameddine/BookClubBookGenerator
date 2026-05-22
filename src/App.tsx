@@ -15,9 +15,9 @@ function App() {
         <main className="flex-1">
           <Routes>
             <Route path="/" element={<GeneratePage />} />
-            <Route path="/search2" element={<BookSearchPage />} />
-            <Route path="/CurrReadPage" element={<CurrentBooksListPage />} />
-            <Route path="/readPage" element={<ReadBooksListPage />} />
+            <Route path="/search" element={<BookSearchPage />} />
+            <Route path="/current" element={<CurrentBooksListPage />} />
+            <Route path="/read" element={<ReadBooksListPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </main>
