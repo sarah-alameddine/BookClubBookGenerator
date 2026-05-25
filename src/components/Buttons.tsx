@@ -11,7 +11,7 @@ function Buttons({ onClick, title, disabled }: ButtonProps) {
         onClick={onClick}
         disabled={disabled}
         className={`
-          w-36 rounded-xl px-5 py-3 text-sm font-semibold text-white
+          w-36 rounded-xl px-4 py-3 text-sm font-semibold text-white
           shadow-sm transition duration-200
           ${
             disabled
