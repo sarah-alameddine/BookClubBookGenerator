@@ -11,7 +11,7 @@ Users can search books using the Google Books API, add them to their collection,
 
 ## Features
 
-- Generate at random next read from urrent book list
+- Generate at random next read from current book list
 - Search books via Google Books API  
 - Add books to personal collection  
 - Track read / unread status  
