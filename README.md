@@ -1,5 +1,4 @@
-
-#  <img src="./src/assets/images/logo.png" width="40" /> Booklings Book Generator 
+# <img src="./src/assets/images/logo.png" width="40" /> Booklings Book Generator
 
 A web application for managing reading lists and generating next read for my book club.
 
@@ -11,7 +10,6 @@ Users can search books using the Google Books API, add them to their collection,
 
 ## Features
 
-- Generate at random next read from current book list
 - Search books via Google Books API  
 - Add books to personal collection  
 - Track read / unread status  
@@ -22,19 +20,19 @@ Users can search books using the Google Books API, add them to their collection,
 
 ## Tech Stack
 
-- React 18 + TypeScript  
-- Tailwind CSS  
-- Firebase (Firestore + Hosting)  
-- Google Books API  
-- Vite  
+- React 18 + TypeScript
+- Tailwind CSS
+- Firebase (Firestore + Hosting)
+- Google Books API
+- Vite
 
 ---
 
 ## Prerequisites
 
-- Node.js (v16+ recommended)  
-- npm  
-- Firebase account  
+- Node.js (v16+ recommended)
+- npm
+- Firebase account
 
 ---
 

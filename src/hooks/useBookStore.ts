@@ -1,82 +1,103 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
-import { db } from '../firebase-config';
-import type { Book } from '../types';
+import { useState, useEffect, useMemo } from "react";
+import {
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+
+import { db } from "../services/firebase";
+import type { ClubBook } from "../types";
 
 export interface UseBooksResult {
-  books: Book[];
+  books: ClubBook[];
   loading: boolean;
   error: string | null;
-  addBook: (book: Omit<Book, 'id'>) => Promise<void>;
-  updateBook: (id: string, updates: Partial<Omit<Book, 'id'>>) => Promise<void>;
+  addBook: (book: Omit<ClubBook, "id">) => Promise<void>;
+  updateBook: (
+    id: string,
+    updates: Partial<Omit<ClubBook, "id">>,
+  ) => Promise<void>;
   deleteBook: (id: string) => Promise<void>;
-  fetchUsersSavedBooks: () => Promise<void>;
+  readBooks: number;
 }
 
-export const useBookStore = (): UseBooksResult => {
-  const [books, setBooks] = useState<Book[]>([]);
+export function useBookStore(clubId: string): UseBooksResult {
+  const [books, setBooks] = useState<ClubBook[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const booksCollectionRef = useMemo(() => collection(db, 'books'), []);
-
-  const fetchUsersSavedBooks = useCallback(async () => {
-    try {
-      setLoading(true);
-      const data = await getDocs(booksCollectionRef);
-      const booksData = data.docs.map((doc) => ({
-        ...(doc.data() as Omit<Book, 'id'>),
-        id: doc.id,
-      }));
-      setBooks(booksData);
-      console.log("booksData --------------",booksData)
-      setError(null);
-    } catch (err) {
-      setError('Failed to fetch books. Please try again.');
-      console.error('Error fetching books:', err);
-    } finally {
-      setLoading(false);
-    }
-  }, [booksCollectionRef]);
-
-  const addBook = useCallback(async (book: Omit<Book, 'id'>) => {
-    try {
-      await addDoc(booksCollectionRef, book);
-      await fetchUsersSavedBooks();
-    } catch (err) {
-      setError('Failed to add book. Please try again.');
-      console.error('Error adding book:', err);
-      throw err;
-    }
-  }, [booksCollectionRef, fetchUsersSavedBooks]);
-
-  const updateBook = useCallback(async (id: string, updates: Partial<Omit<Book, 'id'>>) => {
-    try {
-      const bookDoc = doc(db, 'books', id);
-      await updateDoc(bookDoc, updates);
-      await fetchUsersSavedBooks();
-    } catch (err) {
-      setError('Failed to update book. Please try again.');
-      console.error('Error updating book:', err);
-      throw err;
-    }
-  }, [fetchUsersSavedBooks]);
-
-  const deleteBook = useCallback(async (id: string) => {
-    try {
-      const bookDoc = doc(db, 'books', id);
-      await deleteDoc(bookDoc);
-      await fetchUsersSavedBooks();
-    } catch (err) {
-      setError('Failed to delete book. Please try again.');
-      console.error('Error deleting book:', err);
-      throw err;
-    }
-  }, [fetchUsersSavedBooks]);
+  const readBooks = useMemo(
+    () => books.filter((book) => book.read).length,
+    [books],
+  );
 
   useEffect(() => {
-    fetchUsersSavedBooks();
-  }, [fetchUsersSavedBooks]);
+    async function fetchBooks() {
+      try {
+        setLoading(true);
+
+        const ref = collection(db, "clubs", clubId, "books");
+        const data = await getDocs(ref);
+
+        const booksData: ClubBook[] = data.docs.map((docItem) => ({
+          ...(docItem.data() as Omit<ClubBook, "id">),
+          id: docItem.id,
+        }));
+
+        setBooks(booksData);
+        setError(null);
+      } catch (err) {
+        setError("Failed to fetch books.");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    if (clubId) fetchBooks();
+  }, [clubId]);
+
+  async function refreshBooks() {
+    const ref = collection(db, "clubs", clubId, "books");
+    const data = await getDocs(ref);
+
+    setBooks(
+      data.docs.map((docItem) => ({
+        ...(docItem.data() as Omit<ClubBook, "id">),
+        id: docItem.id,
+      })),
+    );
+  }
+
+  async function addBook(book: Omit<ClubBook, "id">) {
+    const ref = collection(db, "clubs", clubId, "books");
+
+    await addDoc(ref, {
+      ...book,
+      cover: book.cover || "",
+    });
+
+    await refreshBooks();
+  }
+
+  async function updateBook(
+    id: string,
+    updates: Partial<Omit<ClubBook, "id">>,
+  ) {
+    const ref = doc(db, "clubs", clubId, "books", id);
+
+    await updateDoc(ref, updates);
+    await refreshBooks();
+  }
+
+  async function deleteBook(id: string) {
+    const ref = doc(db, "clubs", clubId, "books", id);
+
+    await deleteDoc(ref);
+    await refreshBooks();
+  }
 
   return {
     books,
@@ -85,6 +106,6 @@ export const useBookStore = (): UseBooksResult => {
     addBook,
     updateBook,
     deleteBook,
-    fetchUsersSavedBooks,
+    readBooks,
   };
-};
+}

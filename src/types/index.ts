@@ -1,18 +1,30 @@
-// Book types
-export interface Book {
+export type ClubBook = {
   id: string;
   title: string;
   author: string;
   bookId: string;
-  read: boolean;
   publishedDate?: string;
-}
+  read: boolean;
+  cover?: string;
+};
 
-export interface GoogleBook {
+export type Club = {
   id: string;
-  volumeInfo: {
-    title: string;
-    authors: string[];
-    publishedDate?: string;
-  };
+  name: string;
+  createdAt: Date;
+  createdBy: string;
+};
+
+export type AppUser = {
+  id: string;
+  email: string;
+  clubId?: string;
+};
+
+export interface OpenLibraryBookRaw {
+  key: string;
+  title: string;
+  author_name?: string[];
+  first_publish_year?: number;
+  cover_i?: number;
 }

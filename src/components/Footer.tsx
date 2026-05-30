@@ -5,15 +5,13 @@ type ImageProp = {
 
 export default function Footer({ src, title }: ImageProp) {
   return (
-    <footer className="mt-auto border-t border-base-300 bg-base-200 px-6 py-4">
+    <footer className="border-base-300 bg-base-200 mt-auto border-t px-6 py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <img className="h-8 w-8 rounded-full" src={src} alt={title} />
 
           <div className="flex flex-col">
-            <p className="text-sm text-base-content/80">Booklings Book Club</p>
-
-            <p className="text-xs text-base-content/60">
+            <p className="text-base-content/80 text-sm">
               Made for my Book Club 😊
             </p>
           </div>

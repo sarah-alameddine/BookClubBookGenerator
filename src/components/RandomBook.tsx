@@ -12,9 +12,9 @@ function RandomBook({ users, hasGenerated }: RandomBookProps) {
 
   return (
     <div className="flex">
-      <div className="lg:mx-auto lg:p-8 pt-0 px-32">
+      <div className="px-32 pt-0 lg:mx-auto lg:p-8">
         <h1
-          className={`text-1xl lg:text-2xl font-bold text-center ${
+          className={`text-1xl text-center font-bold lg:text-2xl ${
             !hasBook ? "opacity-0" : ""
           }`}
         >
@@ -23,12 +23,12 @@ function RandomBook({ users, hasGenerated }: RandomBookProps) {
 
         {hasGenerated && !hasBook && (
           <div className="flex justify-center py-12">
-            <div className="rounded-3xl border border-base-200 bg-base-100 shadow-sm p-8 max-w-md text-center">
+            <div className="border-base-200 bg-base-100 max-w-md rounded-3xl border p-8 text-center shadow-sm">
               <p className="text-lg font-semibold">
                 No books have been added yet.
               </p>
 
-              <p className="text-sm text-base-content mt-2">
+              <p className="text-base-content mt-2 text-sm">
                 Search to find and add new books to your current reading list.
               </p>
             </div>
@@ -37,19 +37,19 @@ function RandomBook({ users, hasGenerated }: RandomBookProps) {
 
         {hasBook && (
           <div>
-            <div className="w-full lg:w-96 h-[23rem] lg:h-[23rem] py-12">
+            <div className="h-[23rem] w-full py-12 lg:h-[23rem] lg:w-96">
               <img
-                className="rounded lg:mx-auto shadow max-h-48 object-contain"
+                className="max-h-48 rounded object-contain shadow lg:mx-auto"
                 alt={`${users?.title} book`}
                 src={`http://books.google.com/books/content?id=${users?.bookId}&printsec=frontcover&img=1&zoom=1&source=gbs_api`}
               />
 
               <div className="px-4">
-                <h1 className="text-center text-3xl py-2 break-words max-w-full whitespace-normal">
+                <h1 className="max-w-full whitespace-normal break-words py-2 text-center text-3xl">
                   {users?.title}
                 </h1>
 
-                <h1 className="text-center text-1xl py-1 text-base font-normal text-primary break-words max-w-full whitespace-normal">
+                <h1 className="text-1xl text-primary max-w-full whitespace-normal break-words py-1 text-center text-base font-normal">
                   {users?.author}
                 </h1>
               </div>
