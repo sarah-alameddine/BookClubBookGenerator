@@ -8,120 +8,95 @@ import {
   doc,
 } from "firebase/firestore";
 
-import { db } from "../firebase-config";
-import type { Book } from "../types";
+import { db } from "../services/firebase";
+import type { ClubBook } from "../types";
 
 export interface UseBooksResult {
-  books: Book[];
+  books: ClubBook[];
   loading: boolean;
   error: string | null;
-
-  addBook: (book: Omit<Book, "id">) => Promise<void>;
-
-  updateBook: (id: string, updates: Partial<Omit<Book, "id">>) => Promise<void>;
-
+  addBook: (book: Omit<ClubBook, "id">) => Promise<void>;
+  updateBook: (
+    id: string,
+    updates: Partial<Omit<ClubBook, "id">>,
+  ) => Promise<void>;
   deleteBook: (id: string) => Promise<void>;
   readBooks: number;
 }
 
-export function useBookStore(): UseBooksResult {
-  const [books, setBooks] = useState<Book[]>([]);
+export function useBookStore(clubId: string): UseBooksResult {
+  const [books, setBooks] = useState<ClubBook[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const readBooks = useMemo(() => {
-    const result = books.filter((book) => book.read === true);
-    return result.length;
-  }, [books]);
+  const readBooks = useMemo(
+    () => books.filter((book) => book.read).length,
+    [books],
+  );
 
   useEffect(() => {
     async function fetchBooks() {
       try {
         setLoading(true);
 
-        const booksCollectionRef = collection(db, "books");
+        const ref = collection(db, "clubs", clubId, "books");
+        const data = await getDocs(ref);
 
-        const data = await getDocs(booksCollectionRef);
-
-        const booksData: Book[] = data.docs.map((docItem) => ({
-          ...(docItem.data() as Omit<Book, "id">),
+        const booksData: ClubBook[] = data.docs.map((docItem) => ({
+          ...(docItem.data() as Omit<ClubBook, "id">),
           id: docItem.id,
         }));
 
         setBooks(booksData);
-
         setError(null);
       } catch (err) {
-        console.error(err);
-
         setError("Failed to fetch books.");
       } finally {
         setLoading(false);
       }
     }
 
-    fetchBooks();
-  }, []);
+    if (clubId) fetchBooks();
+  }, [clubId]);
 
   async function refreshBooks() {
-    const booksCollectionRef = collection(db, "books");
+    const ref = collection(db, "clubs", clubId, "books");
+    const data = await getDocs(ref);
 
-    const data = await getDocs(booksCollectionRef);
-
-    const booksData: Book[] = data.docs.map((docItem) => ({
-      ...(docItem.data() as Omit<Book, "id">),
-      id: docItem.id,
-    }));
-
-    setBooks(booksData);
+    setBooks(
+      data.docs.map((docItem) => ({
+        ...(docItem.data() as Omit<ClubBook, "id">),
+        id: docItem.id,
+      })),
+    );
   }
 
-  async function addBook(book: Omit<Book, "id">) {
-    try {
-      const booksCollectionRef = collection(db, "books");
+  async function addBook(book: Omit<ClubBook, "id">) {
+    const ref = collection(db, "clubs", clubId, "books");
 
-      await addDoc(booksCollectionRef, book);
+    await addDoc(ref, {
+      ...book,
+      cover: book.cover || "",
+    });
 
-      await refreshBooks();
-    } catch (err) {
-      console.error(err);
-
-      setError("Failed to add book.");
-
-      throw err;
-    }
+    await refreshBooks();
   }
 
-  async function updateBook(id: string, updates: Partial<Omit<Book, "id">>) {
-    try {
-      const bookDoc = doc(db, "books", id);
+  async function updateBook(
+    id: string,
+    updates: Partial<Omit<ClubBook, "id">>,
+  ) {
+    const ref = doc(db, "clubs", clubId, "books", id);
 
-      await updateDoc(bookDoc, updates);
-
-      await refreshBooks();
-    } catch (err) {
-      console.error(err);
-
-      setError("Failed to update book.");
-
-      throw err;
-    }
+    await updateDoc(ref, updates);
+    await refreshBooks();
   }
 
   async function deleteBook(id: string) {
-    try {
-      const bookDoc = doc(db, "books", id);
+    const ref = doc(db, "clubs", clubId, "books", id);
 
-      await deleteDoc(bookDoc);
-
-      await refreshBooks();
-    } catch (err) {
-      console.error(err);
-
-      setError("Failed to delete book.");
-
-      throw err;
-    }
+    await deleteDoc(ref);
+    await refreshBooks();
   }
 
   return {

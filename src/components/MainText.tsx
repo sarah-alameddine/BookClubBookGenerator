@@ -1,23 +1,30 @@
+import UseClub from "@/hooks/useClub";
+
 function MainText() {
+  const { clubName, loading } = UseClub();
+
+  if (loading) return null;
+
   return (
-    <div className="space-y-2">
-      
-      <h1 className="text-5xl lg:text-8xl font-bold text-center text-emerald-600">
+    <div className="flex flex-col items-center space-y-6 text-center">
+      <h1 className="text-center text-5xl font-bold text-emerald-600 lg:text-8xl">
         GENERATE
       </h1>
 
-      <h1 className="text-2xl lg:text-3xl font-bold text-center text-emerald-500">
+      <h1 className="text-center text-2xl font-bold text-emerald-500 lg:text-3xl">
         THE NEXT BOOK FOR
       </h1>
 
-      <h1 className="text-2xl lg:text-6xl font-bold text-center text-emerald-600">
-        BOOKLINGS BOOK CLUB
-      </h1>
+      <h2 className="text-2xl font-bold lg:text-6xl">
+        <span className="uppercase text-emerald-600 underline decoration-emerald-300 decoration-2 underline-offset-4">
+          {clubName}
+        </span>{" "}
+        <span className="text-emerald-600">Book Club</span>
+      </h2>
 
-      <h1 className="text-sm lg:text-lg font-bold text-center text-emerald-500">
+      <h1 className="text-center text-sm font-bold text-emerald-500 lg:text-lg">
         CAUSE WE ARE ALL INDECISIVE
       </h1>
-
     </div>
   );
 }

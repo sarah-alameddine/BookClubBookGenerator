@@ -1,14 +1,17 @@
 import React from "react";
 import Buttons from "./Buttons";
 import { useBookStore } from "../hooks/useBookStore";
-import catScream from "../assets/images/catScream.jpg";
-import Footer from "./Footer";
-import type { Book } from "../types";
+import type { ClubBook } from "../types";
 
 type BookCollectionProps = {
   listName: string;
+  clubId: string;
 };
-export default function BookCollection({ listName }: BookCollectionProps) {
+
+export default function BookCollection({
+  listName,
+  clubId,
+}: BookCollectionProps) {
   const {
     books: bookList,
     updateBook,
@@ -16,33 +19,28 @@ export default function BookCollection({ listName }: BookCollectionProps) {
     loading,
     error,
     readBooks,
-  } = useBookStore();
+  } = useBookStore(clubId);
 
   const [message, setMessage] = React.useState("");
 
-  const isCurrentList = listName === "Current";
+  const isWantToReadList = listName === "Want To Read";
+  const buttonTitle = isWantToReadList ? "Move to Read" : "Move to Want";
 
-  const nextReadValue = isCurrentList;
+  const filteredBooks = bookList.filter((book) =>
+    isWantToReadList ? !book.read : book.read,
+  );
 
-  const showBookCount = !isCurrentList;
-
-  const buttonTitle =
-    listName === "Current" ? "Move to Read" : "Move to Current";
-
-  const changeBookStatus = async (id: string, currentRead?: boolean) => {
+  const changeBookStatus = async (id: string, currentRead: boolean) => {
     try {
-      console.log("nextReadValue", nextReadValue);
-      console.log("id", id);
-
       const newReadValue = !currentRead;
 
       await updateBook(id, { read: newReadValue });
 
-      setMessage(`Moved to ${newReadValue ? "Read" : "Current"}`);
+      setMessage(`Moved to ${newReadValue ? "Read Books" : "Want To Read"}`);
 
       setTimeout(() => setMessage(""), 3000);
     } catch (error) {
-      console.error(`Failed to mark book as ${listName}:`, error);
+      console.error(error);
     }
   };
 
@@ -51,22 +49,15 @@ export default function BookCollection({ listName }: BookCollectionProps) {
       await deleteBook(id);
 
       setMessage(`You deleted "${title}"`);
+
       setTimeout(() => setMessage(""), 6000);
     } catch (error) {
-      console.error("Failed to delete book:", error);
+      console.error(error);
     }
   };
 
-  const hasUnreadBooks = (bookList: Book[], read: boolean) => {
-    return bookList.some((book) => book.read === read);
-  };
-
-  const filteredBooks = bookList.filter((book) => {
-    return isCurrentList ? book.read === false : book.read === true;
-  });
-
   return (
-    <main className="min-h-screen flex flex-col bg-gray-50">
+    <main className="flex min-h-screen flex-col bg-emerald-50">
       {message && (
         <div className="mx-auto mt-4 w-full max-w-3xl rounded-xl border border-emerald-200 bg-emerald-100 px-6 py-4 text-sm font-medium text-emerald-800 shadow-sm">
           {message}
@@ -75,12 +66,12 @@ export default function BookCollection({ listName }: BookCollectionProps) {
       {/* --------------- HEADER ----------------- */}
       <section className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-10 px-6 pb-12">
         <header className="py-6 text-center">
-          <h1 className="py-6 text-center text-4xl font-bold text-gray-900 lg:text-5xl">
+          <h1 className="py-6 text-4xl font-bold text-emerald-600 lg:text-5xl">
             {listName} Book List
           </h1>
 
-          {showBookCount && (
-            <p className="mt-3 text-gray-600 text-sm lg:text-base">
+          {!isWantToReadList && (
+            <p className="mt-3 text-sm text-gray-600 lg:text-base">
               You’ve finished{" "}
               <span className="font-semibold text-emerald-600">
                 {readBooks}
@@ -89,41 +80,34 @@ export default function BookCollection({ listName }: BookCollectionProps) {
             </p>
           )}
         </header>
-
         {/* --------------- BOOK LIST ----------------- */}
         <section className="flex flex-col gap-8">
           {loading ? (
-            <article className="mx-auto w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-10 text-center shadow-sm">
-              <p className="text-lg font-semibold text-gray-700">
-                Loading books...
-              </p>
-              <div className="mt-6 h-3 w-full overflow-hidden rounded-full bg-gray-200">
-                <div className="h-3 w-2/3 animate-pulse rounded-full bg-emerald-500"></div>
-              </div>
-            </article>
+            <div className="text-center text-gray-600">Loading books...</div>
           ) : error ? (
-            <article className="mx-auto w-full max-w-3xl rounded-2xl border border-red-200 bg-white p-10 text-center shadow-sm">
-              <p className="text-lg font-semibold text-red-600">{error}</p>
-            </article>
-          ) : hasUnreadBooks(bookList, false) === false ? (
-            <article className="mx-auto w-full max-w-3xl rounded-2xl border border-gray-200 bg-white p-10 text-center text-gray-600 shadow-sm">
-              No books yet! Go add your first book 😊📖
-            </article>
+            <div className="text-center text-red-600">{error}</div>
+          ) : filteredBooks.length === 0 ? (
+            <div className="text-center text-gray-600">
+              No books in this list
+            </div>
           ) : (
-            filteredBooks.map((book) => (
+            filteredBooks.map((book: ClubBook) => (
               <article
                 key={book.id}
                 className="mx-auto w-full max-w-3xl rounded-3xl border border-gray-200 bg-white p-6 shadow-sm"
               >
                 <div className="flex flex-col items-center gap-6 lg:flex-row lg:items-start lg:justify-between">
                   {/* ----------- BOOK INFO ---------------*/}
+
                   <div className="flex flex-1 flex-col items-center gap-4 lg:flex-row lg:items-start">
                     <img
-                      className="h-48 w-auto rounded-xl bg-gray-100 p-2 object-contain"
-                      alt={`${book.title} book`}
-                      src={`http://books.google.com/books/content?id=${book.bookId}&printsec=frontcover&img=1&zoom=1&source=gbs_api`}
+                      loading="lazy"
+                      className="h-48 w-32 flex-shrink-0 rounded-xl bg-gray-100 object-contain p-2"
+                      alt={book.title}
+                      src={book.cover || "/images/catScream.jpg"}
                     />
-                    <div className="space-y-3 text-center lg:text-left lg:px-6">
+
+                    <div className="space-y-3 text-center lg:px-6 lg:text-left">
                       <h2 className="text-2xl font-semibold text-gray-900">
                         {book.title}
                       </h2>
@@ -140,7 +124,6 @@ export default function BookCollection({ listName }: BookCollectionProps) {
                       )}
                     </div>
                   </div>
-
                   {/* ------------ BOOK ACTIONS --------------- */}
                   <div className="flex flex-col items-center gap-4 lg:items-end">
                     <Buttons
@@ -151,7 +134,7 @@ export default function BookCollection({ listName }: BookCollectionProps) {
 
                     <Buttons
                       onClick={() => deleteBookFromDB(book.id, book.title)}
-                      title="Delete book"
+                      title="Delete Book"
                       disabled={false}
                     />
                   </div>
@@ -161,9 +144,6 @@ export default function BookCollection({ listName }: BookCollectionProps) {
           )}
         </section>
       </section>
-
-      {/* FOOTER */}
-      <Footer src={catScream} title="cat" />
     </main>
   );
 }

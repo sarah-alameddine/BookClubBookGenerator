@@ -10,15 +10,11 @@ function Buttons({ onClick, title, disabled }: ButtonProps) {
       <button
         onClick={onClick}
         disabled={disabled}
-        className={`
-          w-36 rounded-xl px-4 py-3 text-sm font-semibold text-white
-          shadow-sm transition duration-200
-          ${
-            disabled
-              ? "cursor-not-allowed bg-emerald-300"
-              : "bg-emerald-500 hover:bg-emerald-600 active:scale-95"
-          }
-        `}
+        className={`w-36 rounded-xl px-4 py-3 text-sm font-semibold text-white shadow-sm transition duration-200 ${
+          disabled
+            ? "cursor-not-allowed bg-emerald-300"
+            : "bg-emerald-500 hover:bg-emerald-600 active:scale-95"
+        } `}
       >
         {title}
       </button>

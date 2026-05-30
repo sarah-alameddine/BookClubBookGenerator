@@ -2,12 +2,11 @@ import { useState } from "react";
 import MainText from "./MainText";
 import Buttons from "./Buttons";
 import { useBookStore } from "../hooks/useBookStore";
-import type { Book } from "../types";
-import catLook from "../assets/images/catLook.jpg";
-import Footer from "./Footer";
+import type { ClubBook } from "../types";
+import UseClub from "@/hooks/useClub";
 
 function GeneratePage() {
-  const [users, setUsers] = useState<Book>({
+  const [users, setUsers] = useState<ClubBook>({
     author: "",
     bookId: "",
     publishedDate: "",
@@ -18,8 +17,9 @@ function GeneratePage() {
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [hasGenerated, setHasGenerated] = useState(false);
+  const { clubId } = UseClub();
 
-  const { books: booksInDB } = useBookStore();
+  const { books: booksInDB } = useBookStore(clubId);
 
   const goodreadsLink = users.title
     ? `https://www.goodreads.com/search?q=${encodeURIComponent(
@@ -27,7 +27,7 @@ function GeneratePage() {
       )}`
     : "#";
 
-  function getRandomItem(books: Book[]) {
+  function getRandomItem(books: ClubBook[]) {
     setHasGenerated(true);
     setIsGenerating(true);
 
@@ -61,24 +61,24 @@ function GeneratePage() {
     }, 1200);
   }
 
-  const coverUrl = users.bookId
-    ? `http://books.google.com/books/content?id=${users.bookId}&printsec=frontcover&img=1&zoom=1&source=gbs_api`
-    : null;
+  console.log("Generated book:", users);
+  console.log("bookId:", users.bookId);
+
+  const coverUrl = users.cover || "/images/catScream.jpg";
 
   return (
-    <main className="min-h-screen flex flex-col bg-emerald-50 overflow-x-hidden">
-      {/* MAIN */}
-      <section className="flex-1 flex flex-col items-center w-full">
-        {/* HERO TEXT */}
+    <main className="flex min-h-screen flex-col overflow-x-hidden bg-emerald-50">
+      {/* ---------------- MAIN --------------------*/}
+      <section className="flex w-full flex-1 flex-col items-center">
         <div className="w-full max-w-5xl px-6 py-12">
           <MainText />
         </div>
 
         {/* BUTTON */}
-        <div className="flex flex-col items-center gap-6 w-full">
+        <div className="flex w-full flex-col items-center gap-6">
           <Buttons
             onClick={() => getRandomItem(booksInDB)}
-            title={isGenerating ? "Generating..." : "CLICK HERE!"}
+            title={isGenerating ? "Generating..." : "Generate Book"}
             disabled={isGenerating}
           />
 
@@ -86,41 +86,40 @@ function GeneratePage() {
           {isGenerating && (
             <div className="flex flex-col items-center gap-4">
               <div className="h-14 w-14 animate-spin rounded-full border-4 border-emerald-100 border-t-emerald-600" />
-              <p className="text-sm text-emerald-700 animate-pulse">
+              <p className="animate-pulse text-sm text-emerald-700">
                 Finding your next addictive read...
               </p>
             </div>
           )}
         </div>
 
-        {/* RESULT */}
-        <div className="w-full flex justify-center px-4 py-12">
-          <div className="w-full max-w-3xl flex flex-col items-center gap-4">
+        {/* ---------------- RESULT ------------- */}
+        <div className="flex w-full justify-center px-4 py-12">
+          <div className="flex w-full max-w-3xl flex-col items-center gap-4">
             {/* HEADER */}
             {!isGenerating && hasGenerated && users.title && (
-              <h2 className="text-center text-2xl font-bold text-emerald-700 tracking-wide">
+              <h2 className="text-center text-2xl font-bold tracking-wide text-emerald-700">
                 YOUR NEXT BOOK
               </h2>
             )}
 
             {/* BOOK CARD */}
             {!isGenerating && hasGenerated && users.title && (
-              <div className="w-full rounded-2xl border border-emerald-100 bg-white shadow-xl overflow-hidden">
-                <div className="p-6 flex flex-col items-center text-center gap-5">
-                  {/* COVER */}
-                  {coverUrl && (
-                    <img
-                      src={coverUrl}
-                      alt={users.title}
-                      className="h-64 w-auto rounded-xl shadow-md object-contain bg-gray-100 p-2"
-                    />
-                  )}
-
+              <div className="w-full overflow-hidden rounded-2xl border border-emerald-100 bg-white shadow-xl">
+                <div className="flex flex-col items-center gap-5 p-6 text-center">
+                  <img
+                    loading="lazy"
+                    className="h-48 w-32 flex-shrink-0 rounded-xl bg-gray-100 object-contain p-2"
+                    alt={users.title}
+                    src={coverUrl}
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/catScream.jpg";
+                    }}
+                  />
                   <h3 className="text-2xl font-bold text-gray-900">
                     {users.title}
                   </h3>
-
-                  <p className="text-emerald-600 font-medium">{users.author}</p>
+                  <p className="font-medium text-emerald-600">{users.author}</p>
 
                   {users.publishedDate && (
                     <p className="text-sm text-gray-500">
@@ -128,14 +127,12 @@ function GeneratePage() {
                     </p>
                   )}
 
-                  <div className="w-16 h-1 bg-emerald-200 rounded-full" />
-
-                  {/* GOODREADS LINK (REPLACED TEXT) */}
+                  <div className="h-1 w-16 rounded-full bg-emerald-200" />
                   <a
                     href={goodreadsLink}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-emerald-600 underline hover:text-emerald-800 transition"
+                    className="text-sm text-emerald-600 underline transition hover:text-emerald-800"
                   >
                     View on Goodreads 📖
                   </a>
@@ -149,11 +146,13 @@ function GeneratePage() {
                 Click generate to discover your next book 📖
               </div>
             )}
+
+            <p className="mt-2 text-xs italic text-gray-400">
+              Selected from your 'Want To Read' list
+            </p>
           </div>
         </div>
       </section>
-
-      <Footer src={catLook} title="catLook" />
     </main>
   );
 }
