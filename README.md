@@ -2,7 +2,7 @@
 
 A full-stack Next.js book club web application that allows users to join clubs, search for books, build reading lists, and generate random book recommendations.
 
-🌐 **Live Demo:** https://bookclubbookgenerator-31b3d.web.app
+🌐 **Live Demo:** https://my-book-club-tracker.web.app/
 ---
 
 ## Features

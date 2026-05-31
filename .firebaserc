@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "bookclubbookgenerator-31b3d"
-  }
+    "default": "my-book-club-tracker"
+  },
+  "targets": {},
+  "etags": {}
 }

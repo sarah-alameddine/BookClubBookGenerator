@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import UserDropdown from "./UserDropdown";
 
 function Nav() {
@@ -16,7 +15,7 @@ function Nav() {
       <div className="flex w-full items-center px-4 py-3">
         {/* LEFT */}
         <div className="flex items-center gap-3">
-          <Image
+          <img
             src="/images/logo.png"
             alt="logo"
             width={40}
