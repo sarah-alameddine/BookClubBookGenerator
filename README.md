@@ -1,4 +1,4 @@
-# <img src="public/images/logo.png" width="40" />  Book Club Book Generator
+# <img src="public/images/logo.svg" width="40" />  Book Club Book Generator
 
 A full-stack Next.js book club web application that allows users to join clubs, search for books, build reading lists, and generate random book recommendations.
 
@@ -49,6 +49,5 @@ npm install
 
 ```bash
 npm install
-npm run build
-firebase deploy
+npm run deploy // this runs npm run build && firebase deploy
 ```
