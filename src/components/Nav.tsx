@@ -16,7 +16,7 @@ function Nav() {
         {/* LEFT */}
         <div className="flex items-center gap-3">
           <img
-            src="/images/logo.png"
+            src="/images/logo.svg"
             alt="logo"
             width={40}
             height={40}
